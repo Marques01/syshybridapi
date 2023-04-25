@@ -30,11 +30,11 @@ namespace API.Controllers
 			{
 				var mac = MACAdress.GetUserMAC();
 
-				var devices = await _uof.DevicesRepository.GetDeviceByMAC(mac);
+				var device = await _uof.DevicesRepository.GetDeviceByMAC(mac);
 
-				if (devices.DeviceId > 0)
+				if (device.DeviceId > 0)
 				{
-					var user = await _uof.UserRepository.GetUserByMailAsync(userDto.Email);
+					var user = await _uof.UserRepository.GetUserByMailAsync(userDto.Email);					
 
 					var token = await GenerateToken(user);
 

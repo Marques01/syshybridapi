@@ -18,7 +18,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("filter")]
+        [Route("name")]
         public async Task<ActionResult> GetByName([FromQuery] string name)
         {
             var products = await _uof.ProductRepository.GetProductByNameAsync(name);            
