@@ -49,6 +49,27 @@ namespace DAL.Repository
             }
         }
 
+        public async Task<Product> GetProductByBarCode(string barCode)
+        {
+            try
+            {
+                var product = await _context.Products.AsNoTracking().FirstOrDefaultAsync(x => x.BarCode == barCode);
+
+                if (product is not null)
+                    return product;
+
+                return new Product();
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = "Não foi possível buscar o produto pelo código de barras\t";
+
+                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+
+                throw new Exception(errorMessage);
+            }
+        }
+
         public async Task<Product> GetProductByIdAsync(int id)
         {
             try

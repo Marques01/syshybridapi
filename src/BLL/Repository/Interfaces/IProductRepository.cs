@@ -14,6 +14,8 @@ namespace BLL.Repository.Interfaces
 
 		Task<IEnumerable<Product>> GetProductByNameAsync(string name);
 
+        Task<Product> GetProductByBarCode(string barCode);
+
 		Task<IEnumerable<Product>> GetProductsAsync();        
     }
 }

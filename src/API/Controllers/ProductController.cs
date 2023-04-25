@@ -7,7 +7,7 @@ namespace API.Controllers
 {
 	[ApiController]
     [Route("api/[controller]")]
-    //[Authorize(Roles = "Admin")]
+    [Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IUnitOfWork _uof;
@@ -24,6 +24,15 @@ namespace API.Controllers
             var products = await _uof.ProductRepository.GetProductByNameAsync(name);            
 
             return Ok(products);
+        }
+
+        [HttpGet]
+        [Route("barcode")]
+        public async Task<ActionResult> GetByBarCode([FromQuery] string barCode)
+        {
+            var product = await _uof.ProductRepository.GetProductByBarCode(barCode);
+
+            return Ok(product);
         }
 
         [HttpGet]
