@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230323022110_Add-Devices")]
-    partial class AddDevices
+    [Migration("20230426024817_change_variable_name")]
+    partial class change_variable_name
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -57,16 +57,15 @@ namespace DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Mac")
                         .IsRequired()
                         .HasColumnType("nvarchar(25)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("DeviceId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Devices", (string)null);
                 });
@@ -159,6 +158,27 @@ namespace DAL.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("BLL.Models.UserDevices", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("DeviceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserDevices", (string)null);
+                });
+
             modelBuilder.Entity("BLL.Models.UserRoles", b =>
                 {
                     b.Property<int>("UserRolesId")
@@ -212,13 +232,21 @@ namespace DAL.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("BLL.Models.Devices", b =>
+            modelBuilder.Entity("BLL.Models.UserDevices", b =>
                 {
+                    b.HasOne("BLL.Models.Devices", "Devices")
+                        .WithMany("UserDevices")
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("BLL.Models.User", "User")
-                        .WithMany("Devices")
+                        .WithMany("UserDevices")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Devices");
 
                     b.Navigation("User");
                 });
@@ -254,6 +282,11 @@ namespace DAL.Migrations
                     b.Navigation("CategoriesProducts");
                 });
 
+            modelBuilder.Entity("BLL.Models.Devices", b =>
+                {
+                    b.Navigation("UserDevices");
+                });
+
             modelBuilder.Entity("BLL.Models.Product", b =>
                 {
                     b.Navigation("CategoriesProducts");
@@ -261,7 +294,7 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("BLL.Models.User", b =>
                 {
-                    b.Navigation("Devices");
+                    b.Navigation("UserDevices");
 
                     b.Navigation("UserRoles");
                 });

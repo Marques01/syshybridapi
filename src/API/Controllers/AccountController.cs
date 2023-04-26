@@ -28,14 +28,12 @@ namespace API.Controllers
 
 			if (userSignin.IsSuccess)
 			{
-				var mac = MACAdress.GetUserMAC();
+                var user = await _uof.UserRepository.GetUserByMailAsync(userDto.Email);
 
-				var device = await _uof.DevicesRepository.GetDeviceByMAC(mac);
+                var devices = await _uof.DevicesRepository.GetDevicesByUserIdAsync(user.UserId);
 
-				if (device.DeviceId > 0)
+				if (devices.Count() > 0)
 				{
-					var user = await _uof.UserRepository.GetUserByMailAsync(userDto.Email);					
-
 					var token = await GenerateToken(user);
 
 					user.LastLogin = DateTime.Now;
@@ -72,24 +70,7 @@ namespace API.Controllers
 
 			if (!userExists)
 			{
-				await _uof.UserRepository.CreateAsync(user);
-
-				await _uof.CommitAsync();
-
-				var mac = MACAdress.GetUserMAC();
-
-				List<Devices> devices = new();
-
-				foreach (var macAdress in mac)
-				{
-					devices.Add(new Devices()
-					{
-						Mac = macAdress,
-						UserId = user.UserId,
-					});
-				}
-
-				await _uof.DevicesRepository.CreateAsync(devices);
+				await _uof.UserRepository.CreateAsync(user);				
 
 				await _uof.CommitAsync();
 

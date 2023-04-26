@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230320014747_Initial")]
-    partial class Initial
+    [Migration("20230426021902_Create-UserDevices")]
+    partial class CreateUserDevices
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -49,6 +49,25 @@ namespace DAL.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("CategoriesProducts", (string)null);
+                });
+
+            modelBuilder.Entity("BLL.Models.Devices", b =>
+                {
+                    b.Property<int>("DeviceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("DeviceName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Mac")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(25)");
+
+                    b.HasKey("DeviceId");
+
+                    b.ToTable("Devices", (string)null);
                 });
 
             modelBuilder.Entity("BLL.Models.Product", b =>
@@ -139,6 +158,27 @@ namespace DAL.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("BLL.Models.UserDevices", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("DeviceId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DeviceId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserDevices", (string)null);
+                });
+
             modelBuilder.Entity("BLL.Models.UserRoles", b =>
                 {
                     b.Property<int>("UserRolesId")
@@ -192,6 +232,25 @@ namespace DAL.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("BLL.Models.UserDevices", b =>
+                {
+                    b.HasOne("BLL.Models.Devices", "Devices")
+                        .WithMany("UserDevices")
+                        .HasForeignKey("DeviceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BLL.Models.User", "User")
+                        .WithMany("UserDevices")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Devices");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BLL.Models.UserRoles", b =>
                 {
                     b.HasOne("BLL.Models.User", "User")
@@ -223,6 +282,11 @@ namespace DAL.Migrations
                     b.Navigation("CategoriesProducts");
                 });
 
+            modelBuilder.Entity("BLL.Models.Devices", b =>
+                {
+                    b.Navigation("UserDevices");
+                });
+
             modelBuilder.Entity("BLL.Models.Product", b =>
                 {
                     b.Navigation("CategoriesProducts");
@@ -230,6 +294,8 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("BLL.Models.User", b =>
                 {
+                    b.Navigation("UserDevices");
+
                     b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618

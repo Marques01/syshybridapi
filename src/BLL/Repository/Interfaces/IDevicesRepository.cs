@@ -12,14 +12,18 @@ namespace BLL.Repository.Interfaces
 
         Task DeleteAsync(int id);
 
-        Task<IEnumerable<Devices>> GetAllAsync();
+        Task AssociateUserDeviceAsync(int userId, int deviceId);
 
-        Task<IEnumerable<Devices>> GetDevicesByUserId(int userId);
+        Task AssociateUserAllDevicesAsync(int userId);        
 
-        Task<Devices> GetDeviceByMAC(string mac);
+        Task<Devices> GetDeviceByMACAsync(string mac);
 
-		Task<Devices> GetDeviceByMAC(IEnumerable<string> mac);
+		Task<Devices> GetDeviceByMACAsync(IEnumerable<string> macs);
 
-		Task<Devices> GetByIdAsync(int id);
+		Task<Devices> GetDeviceByIdAsync(int id);
+
+        Task<IEnumerable<Devices>> GetDevicesAsync();
+
+        Task<IEnumerable<UserDevices>> GetDevicesByUserIdAsync(int userId);
     }
 }

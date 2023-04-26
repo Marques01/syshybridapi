@@ -18,6 +18,10 @@ namespace DAL.Mapping
             builder.HasMany(x => x.UserRoles)
                 .WithOne(x => x.User)
                 .HasForeignKey(x => x.UserId);
-        }
+
+            builder.HasMany(u => u.UserDevices)
+			.WithOne(ud => ud.User)
+			.HasForeignKey(ud => ud.UserId);
+		}
     }
 }
