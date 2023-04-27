@@ -5,7 +5,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Utils;
 
 namespace API.Controllers
 {
@@ -22,7 +21,7 @@ namespace API.Controllers
 
 		[Route("login")]
 		[HttpPost]
-		public async Task<ActionResult> Signin([FromBody] UserDto userDto)
+		public async Task<ActionResult> Signin([FromBody] UserDto userDto, [FromQuery] IEnumerable<string> mac)
 		{
 			var userSignin = await _uof.UserRepository.SignInAsync(userDto);
 
@@ -30,9 +29,9 @@ namespace API.Controllers
 			{
                 var user = await _uof.UserRepository.GetUserByMailAsync(userDto.Email);
 
-                var devices = await _uof.DevicesRepository.GetDevicesByUserIdAsync(user.UserId);
+				bool deviceAuthorized = _uof.DevicesRepository.GetDeviceByMACAsync(mac).Result.DeviceId > 0 ? true : false;                		
 
-				if (devices.Count() > 0)
+				if (deviceAuthorized)
 				{
 					var token = await GenerateToken(user);
 
