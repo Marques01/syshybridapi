@@ -36,7 +36,7 @@ namespace SysTests.Repository
             User user = new()
             {
                 CreateAt = DateTime.Now,
-                Email = "email@email.com",
+                Login = "email@email.com",
                 Enabled = true,
                 FailedCount = 0,
                 FirstName = "Test",
@@ -64,7 +64,7 @@ namespace SysTests.Repository
             User user = new()
             {
                 CreateAt = DateTime.Now,
-                Email = "email@email.com",
+                Login = "email@email.com",
                 Enabled = true,
                 FailedCount = 0,
                 FirstName = "Test",
@@ -90,7 +90,7 @@ namespace SysTests.Repository
             User user = new()
             {
                 CreateAt = DateTime.Now,
-                Email = "email@email.com",
+                Login = "email@email.com",
                 Enabled = true,
                 FailedCount = 0,
                 FirstName = "Test",

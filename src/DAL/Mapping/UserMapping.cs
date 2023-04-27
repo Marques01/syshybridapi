@@ -12,7 +12,7 @@ namespace DAL.Mapping
             builder.HasKey(x => x.UserId);
             builder.Property(x => x.FirstName).IsRequired().HasColumnType<string>("nvarchar(50)");
             builder.Property(x => x.LastName).IsRequired().HasColumnType<string>("nvarchar(50)");
-            builder.Property(x => x.Email).IsRequired().HasColumnType<string>("nvarchar(100)");
+            builder.Property(x => x.Login).IsRequired().HasColumnType<string>("nvarchar(100)");
             builder.Property(x => x.Password).HasColumnType<string>("nvarchar(125)");
 
             builder.HasMany(x => x.UserRoles)

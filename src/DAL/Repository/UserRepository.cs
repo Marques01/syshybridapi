@@ -22,7 +22,7 @@ namespace DAL.Repository
 			{
 				user.Password = Encryption.GenerateHash(user.Password.Trim());
 
-				user.Email = user.Email.Trim().ToLower();
+				user.Login = user.Login.Trim().ToLower();
 
 				await _context.Users.AddAsync(user);
 			}
@@ -57,11 +57,11 @@ namespace DAL.Repository
 			}
 		}
 
-		public async Task<User> GetUserByMailAsync(string mail)
+		public async Task<User> GetUserByLoginAsync(string mail)
 		{
 			try
 			{
-				var user = await _context.Users.FirstOrDefaultAsync(x => x.Email.Equals(mail.Trim().ToLower()));
+				var user = await _context.Users.FirstOrDefaultAsync(x => x.Login.Equals(mail.Trim().ToLower()));
 
 				if (user is not null)
 					return user;
@@ -85,7 +85,7 @@ namespace DAL.Repository
 				user.Password = Encryption.GenerateHash(user.Password);
 
 				var userValid = await _context.Users
-					.FirstOrDefaultAsync(x => x.Email.Equals(user.Email.Trim().ToLower()) && x.Password.Equals(user.Password.Trim()));
+					.FirstOrDefaultAsync(x => x.Login.Equals(user.Email.Trim().ToLower()) && x.Password.Equals(user.Password.Trim()));
 
 				if (userValid is not null && userValid.FailedCount <= 3)
 					return new BaseModel() { IsSuccess = true, Message = "Login realizado com sucesso" };
@@ -127,7 +127,7 @@ namespace DAL.Repository
 			{
 				var userExists = await _context.Users
 					.AsNoTracking()
-					.FirstOrDefaultAsync(x => x.Email.Equals(user.Email.Trim().ToLower()) && x.Password.Equals(user.Password.Trim()));
+					.FirstOrDefaultAsync(x => x.Login.Equals(user.Login.Trim().ToLower()) && x.Password.Equals(user.Password.Trim()));
 
 				if (userExists is not null)
 					return true;

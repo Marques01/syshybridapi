@@ -27,7 +27,7 @@ namespace API.Controllers
 
 			if (userSignin.IsSuccess)
 			{
-				var user = await _uof.UserRepository.GetUserByMailAsync(userDto.Email);				
+				var user = await _uof.UserRepository.GetUserByLoginAsync(userDto.Email);				
 
 				bool deviceAuthorized = await _uof.DevicesRepository.VerifyDeviceAuthorizedAsync(mac, user.UserId);
 
@@ -47,7 +47,7 @@ namespace API.Controllers
 
 			if (!userSignin.IsSuccess)
 			{
-				var _user = await _uof.UserRepository.GetUserByMailAsync(userDto.Email);
+				var _user = await _uof.UserRepository.GetUserByLoginAsync(userDto.Email);
 
 				if (_user.UserId > 0)
 				{
@@ -89,7 +89,7 @@ namespace API.Controllers
 
 				authClaims.Add(new Claim(ClaimTypes.Actor, $"{userInfo.FirstName} {userInfo.LastName}"));
 
-				authClaims.Add(new Claim(ClaimTypes.Email, userInfo.Email));
+				authClaims.Add(new Claim(ClaimTypes.Email, userInfo.Login));
 
 				foreach (var item in roles)
 				{

@@ -14,6 +14,6 @@ namespace BLL.Repository.Interfaces
 
         Task<BaseModel> SignInAsync(UserDto user);
 
-        Task<User> GetUserByMailAsync(string mail);
+        Task<User> GetUserByLoginAsync(string mail);
     }
 }
