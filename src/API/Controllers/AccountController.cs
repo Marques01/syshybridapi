@@ -23,13 +23,13 @@ namespace API.Controllers
 		[HttpPost]
 		public async Task<ActionResult> Signin([FromBody] UserDto userDto, [FromQuery] IEnumerable<string> mac)
 		{
-			var userSignin = await _uof.UserRepository.SignInAsync(userDto);
+			var userSignin = await _uof.UserRepository.SignInAsync(userDto);			
 
 			if (userSignin.IsSuccess)
 			{
-                var user = await _uof.UserRepository.GetUserByMailAsync(userDto.Email);
+				var user = await _uof.UserRepository.GetUserByMailAsync(userDto.Email);				
 
-				bool deviceAuthorized = _uof.DevicesRepository.GetDeviceByMACAsync(mac).Result.DeviceId > 0 ? true : false;                		
+				bool deviceAuthorized = await _uof.DevicesRepository.VerifyDeviceAuthorizedAsync(mac, user.UserId);
 
 				if (deviceAuthorized)
 				{
@@ -69,7 +69,7 @@ namespace API.Controllers
 
 			if (!userExists)
 			{
-				await _uof.UserRepository.CreateAsync(user);				
+				await _uof.UserRepository.CreateAsync(user);
 
 				await _uof.CommitAsync();
 

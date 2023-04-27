@@ -25,5 +25,7 @@ namespace BLL.Repository.Interfaces
         Task<IEnumerable<Devices>> GetDevicesAsync();
 
         Task<IEnumerable<UserDevices>> GetDevicesByUserIdAsync(int userId);
+
+        Task<bool> VerifyDeviceAuthorizedAsync(IEnumerable<string> macs, int userId);
     }
 }

@@ -7,259 +7,285 @@ using Utils.Logger;
 
 namespace DAL.Repository
 {
-    public class DevicesRepository : IDevicesRepository
-    {
-        private readonly ApplicationDbContext _context;
+	public class DevicesRepository : IDevicesRepository
+	{
+		private readonly ApplicationDbContext _context;
 
-        public DevicesRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+		public DevicesRepository(ApplicationDbContext context)
+		{
+			_context = context;
+		}
 
-        public async Task AssociateUserAllDevicesAsync(int userId)
-        {
-            try
-            {
-                string query =
-                                @"SELECT @USERID, D.DEVICEID, D.MAC, D.Description
+		public async Task AssociateUserAllDevicesAsync(int userId)
+		{
+			try
+			{
+				string query =
+								@"SELECT @USERID, D.DEVICEID, D.MAC, D.Description
 	                              FROM DEVICES D
 	                              LEFT JOIN USERDEVICES UD 
                                   ON D.DEVICEID = UD.DEVICEID AND UD.USERID = @USERID
 	                              WHERE UD.ID IS NULL;";
 
-                var devicesNotAssociated = await _context.Devices.FromSqlRaw(query, new MySqlParameter("@USERID", userId)).ToListAsync();
+				var devicesNotAssociated = await _context.Devices.FromSqlRaw(query, new MySqlParameter("@USERID", userId)).ToListAsync();
 
-                List<UserDevices> userDevices = new();
+				List<UserDevices> userDevices = new();
 
 
-                foreach (var device in devicesNotAssociated)
-                {
-                    userDevices.Add(new UserDevices()
-                    {
-                        DeviceId = device.DeviceId,
-                        UserId = userId
-                    });
-                }
+				foreach (var device in devicesNotAssociated)
+				{
+					userDevices.Add(new UserDevices()
+					{
+						DeviceId = device.DeviceId,
+						UserId = userId
+					});
+				}
 
-                if (userDevices.Count > 0)
-                    await _context.UserDevices.AddRangeAsync(userDevices);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = "Não foi possível associar o usuário aos dispositivos\t";
+				if (userDevices.Count > 0)
+					await _context.UserDevices.AddRangeAsync(userDevices);
+			}
+			catch (Exception ex)
+			{
+				string errorMessage = "Não foi possível associar o usuário aos dispositivos\t";
 
-                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+				await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
 
-                throw new Exception(errorMessage);
-            }
-        }
+				throw new Exception(errorMessage);
+			}
+		}
 
-        public async Task AssociateUserDeviceAsync(int userId, int deviceId)
-        {
-            try
-            {
-                var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.UserId.Equals(userId));
+		public async Task AssociateUserDeviceAsync(int userId, int deviceId)
+		{
+			try
+			{
+				var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.UserId.Equals(userId));
 
-                var device = await GetDeviceByIdAsync(deviceId);
+				var device = await GetDeviceByIdAsync(deviceId);
 
-                if (user is not null && device.DeviceId > 0)
-                {
-                    UserDevices userDevices = new()
-                    {
-                        UserId = user.UserId,
-                        DeviceId = deviceId
-                    };
+				if (user is not null && device.DeviceId > 0)
+				{
+					UserDevices userDevices = new()
+					{
+						UserId = user.UserId,
+						DeviceId = deviceId
+					};
 
-                    await _context.AddAsync(userDevices);
-                }
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = "Não foi possível associar o usuário ao dispositivo\t";
+					await _context.AddAsync(userDevices);
+				}
+			}
+			catch (Exception ex)
+			{
+				string errorMessage = "Não foi possível associar o usuário ao dispositivo\t";
 
-                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+				await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
 
-                throw new Exception(errorMessage);
-            }
-        }
+				throw new Exception(errorMessage);
+			}
+		}
 
-        public async Task CreateAsync(Devices devices)
-        {
-            try
-            {
-                await _context.Devices.AddAsync(devices);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = "Não foi possível cadastrar o dispositivo\t";
+		public async Task CreateAsync(Devices devices)
+		{
+			try
+			{
+				await _context.Devices.AddAsync(devices);
+			}
+			catch (Exception ex)
+			{
+				string errorMessage = "Não foi possível cadastrar o dispositivo\t";
 
-                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+				await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
 
-                throw new Exception(errorMessage);
-            }
-        }
+				throw new Exception(errorMessage);
+			}
+		}
 
-        public async Task CreateAsync(IEnumerable<Devices> devices)
-        {
-            try
-            {
-                await _context.Devices.AddRangeAsync(devices);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = "Não foi possível cadastrar o dispositivo\t";
+		public async Task CreateAsync(IEnumerable<Devices> devices)
+		{
+			try
+			{
+				await _context.Devices.AddRangeAsync(devices);
+			}
+			catch (Exception ex)
+			{
+				string errorMessage = "Não foi possível cadastrar o dispositivo\t";
 
-                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+				await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
 
-                throw new Exception(errorMessage);
-            }
-        }
+				throw new Exception(errorMessage);
+			}
+		}
 
-        public async Task DeleteAsync(int id)
-        {
-            try
-            {
-                var device = await GetDeviceByIdAsync(id);
+		public async Task DeleteAsync(int id)
+		{
+			try
+			{
+				var device = await GetDeviceByIdAsync(id);
 
-                _context.Devices.Remove(device);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = "Não foi possível deletar o dispositivo\t";
+				_context.Devices.Remove(device);
+			}
+			catch (Exception ex)
+			{
+				string errorMessage = "Não foi possível deletar o dispositivo\t";
 
-                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+				await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
 
-                throw new Exception(errorMessage);
-            }
-        }
+				throw new Exception(errorMessage);
+			}
+		}
 
-        public async Task<IEnumerable<Devices>> GetDevicesAsync()
-        {
-            try
-            {
-                var devices = await _context.Devices.AsNoTracking().ToListAsync();
+		public async Task<IEnumerable<Devices>> GetDevicesAsync()
+		{
+			try
+			{
+				var devices = await _context.Devices.AsNoTracking().ToListAsync();
 
-                if (devices is not null)
-                    return devices;
+				if (devices is not null)
+					return devices;
 
-                return Enumerable.Empty<Devices>();
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = "Não foi possível buscar os dispositivos\t";
+				return Enumerable.Empty<Devices>();
+			}
+			catch (Exception ex)
+			{
+				string errorMessage = "Não foi possível buscar os dispositivos\t";
 
-                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+				await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
 
-                throw new Exception(errorMessage);
-            }
-        }
+				throw new Exception(errorMessage);
+			}
+		}
 
-        public async Task<Devices> GetDeviceByIdAsync(int id)
-        {
-            try
-            {
-                var device = await _context.Devices.FirstOrDefaultAsync(x => x.DeviceId.Equals(id));
+		public async Task<Devices> GetDeviceByIdAsync(int id)
+		{
+			try
+			{
+				var device = await _context.Devices.FirstOrDefaultAsync(x => x.DeviceId.Equals(id));
 
-                if (device is not null)
-                    return device;
+				if (device is not null)
+					return device;
 
-                return new Devices();
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = "Não foi possível buscar o dispositivo pelo id\t";
+				return new Devices();
+			}
+			catch (Exception ex)
+			{
+				string errorMessage = "Não foi possível buscar o dispositivo pelo id\t";
 
-                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+				await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
 
-                throw new Exception(errorMessage);
-            }
-        }
+				throw new Exception(errorMessage);
+			}
+		}
 
-        public async Task<Devices> GetDeviceByMACAsync(string mac)
-        {
-            try
-            {
-                var device = await _context.Devices.AsNoTracking().FirstOrDefaultAsync(x => x.Mac.Equals(mac));
+		public async Task<Devices> GetDeviceByMACAsync(string mac)
+		{
+			try
+			{
+				var device = await _context.Devices.AsNoTracking().FirstOrDefaultAsync(x => x.Mac.Equals(mac));
 
-                if (device is not null)
-                    return device;
+				if (device is not null)
+					return device;
 
-                return new Devices();
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = "Não foi possível buscar o dispositivo pelo mac\t";
+				return new Devices();
+			}
+			catch (Exception ex)
+			{
+				string errorMessage = "Não foi possível buscar o dispositivo pelo mac\t";
 
-                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+				await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
 
-                throw new Exception(errorMessage);
-            }
-        }
+				throw new Exception(errorMessage);
+			}
+		}
 
-        public async Task<Devices> GetDeviceByMACAsync(IEnumerable<string> macs)
-        {
-            try
-            {
-                foreach (var mac in macs)
-                {
-                    var device = await _context.Devices.AsNoTracking().Include(x => x.UserDevices).FirstOrDefaultAsync(x => x.Mac.Equals(mac));
+		public async Task<Devices> GetDeviceByMACAsync(IEnumerable<string> macs)
+		{
+			try
+			{
+				foreach (var mac in macs)
+				{
+					var device = await _context.Devices.AsNoTracking().Include(x => x.UserDevices).FirstOrDefaultAsync(x => x.Mac.Equals(mac));
 
-                    if (device is not null)
-                        return device;
-                }
+					if (device is not null)
+						return device;
+				}
 
-                return new Devices();
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = "Não foi possível buscar o dispositivo pelo mac\t";
+				return new Devices();
+			}
+			catch (Exception ex)
+			{
+				string errorMessage = "Não foi possível buscar o dispositivo pelo mac\t";
 
-                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+				await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
 
-                throw new Exception(errorMessage);
-            }
-        }
+				throw new Exception(errorMessage);
+			}
+		}
 
-        public async Task<IEnumerable<UserDevices>> GetDevicesByUserIdAsync(int userId)
-        {
-            try
-            {
-                var devices = await _context.UserDevices
-                    .AsNoTracking()
-                    .Include(x => x.User)
-                    .Include(x => x.Devices)
-                    .Where(u => u.UserId.Equals(userId))
-                    .ToListAsync();
+		public async Task<IEnumerable<UserDevices>> GetDevicesByUserIdAsync(int userId)
+		{
+			try
+			{
+				var devices = await _context.UserDevices
+					.AsNoTracking()
+					.Include(x => x.User)
+					.Include(x => x.Devices)
+					.Where(u => u.UserId.Equals(userId))
+					.ToListAsync();
 
-                if (devices is not null)
-                    return devices;
+				if (devices is not null)
+					return devices;
 
-                return Enumerable.Empty<UserDevices>();
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = "Não foi possível buscar o dispositivo pelo id do usuário\t";
+				return Enumerable.Empty<UserDevices>();
+			}
+			catch (Exception ex)
+			{
+				string errorMessage = "Não foi possível buscar o dispositivo pelo id do usuário\t";
 
-                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+				await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
 
-                throw new Exception(errorMessage);
-            }
-        }
+				throw new Exception(errorMessage);
+			}
+		}
 
-        public async Task UpdateAsync(Devices device)
-        {
-            try
-            {
-                _context.Devices.Update(device);
-            }
-            catch (Exception ex)
-            {
-                string errorMessage = "Não foi possível atualizar o dispositivo\t";
+		public async Task UpdateAsync(Devices device)
+		{
+			try
+			{
+				_context.Devices.Update(device);
+			}
+			catch (Exception ex)
+			{
+				string errorMessage = "Não foi possível atualizar o dispositivo\t";
 
-                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+				await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
 
-                throw new Exception(errorMessage);
-            }
-        }
-    }
+				throw new Exception(errorMessage);
+			}
+		}
+
+		public async Task<bool> VerifyDeviceAuthorizedAsync(IEnumerable<string> macs, int userId)
+		{
+			try
+			{
+				var devices = await _context.Devices
+					.AsNoTracking()
+					.Include(u => u.UserDevices)
+					.Where(x => macs.Contains(x.Mac)).ToListAsync();
+
+				foreach (var device in devices)
+				{
+					return device.UserDevices?.Where(x => x.UserId.Equals(userId)).Count() > 0 ? true : false;
+				}
+
+				return false;
+			}
+			catch (Exception ex)
+			{
+				string errorMessage = "Não foi possível verificar se dispositivo está autorizado para login\t";
+
+				await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+
+				throw new Exception(errorMessage);
+			}
+		}
+	}
 }
