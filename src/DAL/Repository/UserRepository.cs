@@ -87,6 +87,9 @@ namespace DAL.Repository
 				var userValid = await _context.Users
 					.FirstOrDefaultAsync(x => x.Login.Equals(user.Email.Trim().ToLower()) && x.Password.Equals(user.Password.Trim()));
 
+				if (userValid is not null && !userValid.Enabled)
+					return new BaseModel() { IsSuccess = false, Message = "Login desabilitado." };
+
 				if (userValid is not null && userValid.FailedCount <= 3)
 					return new BaseModel() { IsSuccess = true, Message = "Login realizado com sucesso" };
 
