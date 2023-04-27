@@ -42,9 +42,11 @@ namespace DAL.Repository
             }
             catch (Exception ex)
             {
-                string errorMessage = "Falha ao salvar as alterações\t";
+                string errorMessage = "Falha ao salvar as alterações\n";
 
-                await RegisterLogs.CreateAsync(errorMessage += ex.Message, this.GetType().ToString());
+                string exceptionMessage = $"Message: {ex.Message}\nStackTrace: {ex.StackTrace}\nInner: {ex.InnerException}";
+
+                await RegisterLogs.CreateAsync(errorMessage += exceptionMessage, this.GetType().ToString());
 
                 throw new Exception(errorMessage);
             }

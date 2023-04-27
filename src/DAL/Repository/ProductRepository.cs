@@ -15,7 +15,29 @@ namespace DAL.Repository
             _context = context;
         }
 
-        public async Task CreateAsync(Product product)
+		public async Task AssociateProductCategory(int productId, int categoryId)
+		{
+            try
+            {
+                CategoryProduct categoryProduct = new()
+                {
+                    ProductId = productId,
+                    CategoryId = categoryId,
+                };
+
+                await _context.CategoriesProducts.AddAsync(categoryProduct);
+            }
+            catch (Exception ex)
+            {
+				string errorMessage = "Não foi possível associar o produto a categoria\n";                
+
+				await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+
+				throw new Exception(errorMessage);
+			}
+		}
+
+		public async Task CreateAsync(Product product)
         {
             try
             {
@@ -53,7 +75,7 @@ namespace DAL.Repository
         {
             try
             {
-                var product = await _context.Products.AsNoTracking().FirstOrDefaultAsync(x => x.BarCode == barCode);
+                var product = await _context.Products.AsNoTracking().Include(x => x.CategoriesProducts).FirstOrDefaultAsync(x => x.BarCode == barCode);
 
                 if (product is not null)
                     return product;
@@ -74,7 +96,7 @@ namespace DAL.Repository
         {
             try
             {
-                var product = await _context.Products.FirstOrDefaultAsync(x => x.ProductId.Equals(id));
+                var product = await _context.Products.Include(x => x.CategoriesProducts).FirstOrDefaultAsync(x => x.ProductId.Equals(id));
 
                 if (product is not null)
                     return product;
@@ -95,7 +117,7 @@ namespace DAL.Repository
 		{
             try
             {
-                var product = await _context.Products.AsNoTracking().Where(x => x.Name.Contains(name)).ToListAsync();
+                var product = await _context.Products.AsNoTracking().Include(x => x.CategoriesProducts).Where(x => x.Name.Contains(name)).ToListAsync();
 
                 if (product is not null)
                     return product.AsEnumerable();
@@ -116,7 +138,7 @@ namespace DAL.Repository
         {
             try
             {
-                var products = await _context.Products.AsNoTracking().ToListAsync();
+                var products = await _context.Products.AsNoTracking().Include(x => x.CategoriesProducts).ToListAsync();
 
                 if (products is not null)
                     return products;

@@ -12,10 +12,12 @@ namespace BLL.Repository.Interfaces
 
         Task<Product> GetProductByIdAsync(int id);
 
+		Task<Product> GetProductByBarCode(string barCode);
+
 		Task<IEnumerable<Product>> GetProductByNameAsync(string name);
 
-        Task<Product> GetProductByBarCode(string barCode);
+		Task<IEnumerable<Product>> GetProductsAsync();
 
-		Task<IEnumerable<Product>> GetProductsAsync();        
+        Task AssociateProductCategory(int productId, int categoryId);
     }
 }
