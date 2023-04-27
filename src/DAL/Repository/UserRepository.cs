@@ -85,7 +85,7 @@ namespace DAL.Repository
 				user.Password = Encryption.GenerateHash(user.Password);
 
 				var userValid = await _context.Users
-					.FirstOrDefaultAsync(x => x.Login.Equals(user.Email.Trim().ToLower()) && x.Password.Equals(user.Password.Trim()));
+					.FirstOrDefaultAsync(x => x.Login.Equals(user.Login.Trim().ToLower()) && x.Password.Equals(user.Password.Trim()));
 
 				if (userValid is not null && !userValid.Enabled)
 					return new BaseModel() { IsSuccess = false, Message = "Login desabilitado." };
@@ -130,7 +130,7 @@ namespace DAL.Repository
 			{
 				var userExists = await _context.Users
 					.AsNoTracking()
-					.FirstOrDefaultAsync(x => x.Login.Equals(user.Login.Trim().ToLower()) && x.Password.Equals(user.Password.Trim()));
+					.FirstOrDefaultAsync(x => x.Login.Equals(user.Login.Trim().ToLower()));
 
 				if (userExists is not null)
 					return true;

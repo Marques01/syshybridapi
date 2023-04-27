@@ -27,7 +27,7 @@ namespace API.Controllers
 
 			if (userSignin.IsSuccess)
 			{
-				var user = await _uof.UserRepository.GetUserByLoginAsync(userDto.Email);				
+				var user = await _uof.UserRepository.GetUserByLoginAsync(userDto.Login);				
 
 				bool deviceAuthorized = await _uof.DevicesRepository.VerifyDeviceAuthorizedAsync(mac, user.UserId);
 
@@ -47,7 +47,7 @@ namespace API.Controllers
 
 			if (!userSignin.IsSuccess)
 			{
-				var _user = await _uof.UserRepository.GetUserByLoginAsync(userDto.Email);
+				var _user = await _uof.UserRepository.GetUserByLoginAsync(userDto.Login);
 
 				if (_user.UserId > 0)
 				{
