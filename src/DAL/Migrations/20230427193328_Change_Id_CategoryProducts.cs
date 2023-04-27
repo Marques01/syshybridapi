@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DAL.Migrations
 {
-    public partial class CreateUserDevices : Migration
+    public partial class Change_Id_CategoryProducts : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -34,7 +34,7 @@ namespace DAL.Migrations
                     DeviceId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Mac = table.Column<string>(type: "nvarchar(25)", nullable: false),
-                    DeviceName = table.Column<string>(type: "longtext", nullable: false)
+                    Description = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -100,12 +100,14 @@ namespace DAL.Migrations
                 name: "CategoriesProducts",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CategoriesProducts", x => new { x.CategoryId, x.ProductId });
+                    table.PrimaryKey("PK_CategoriesProducts", x => x.Id);
                     table.ForeignKey(
                         name: "FK_CategoriesProducts_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -115,31 +117,6 @@ namespace DAL.Migrations
                     table.ForeignKey(
                         name: "FK_CategoriesProducts_Products_ProductId",
                         column: x => x.ProductId,
-                        principalTable: "Products",
-                        principalColumn: "ProductId",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "CategoryProduct",
-                columns: table => new
-                {
-                    CategoriesCategoryId = table.Column<int>(type: "int", nullable: false),
-                    ProductsProductId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CategoryProduct", x => new { x.CategoriesCategoryId, x.ProductsProductId });
-                    table.ForeignKey(
-                        name: "FK_CategoryProduct_Categories_CategoriesCategoryId",
-                        column: x => x.CategoriesCategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "CategoryId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CategoryProduct_Products_ProductsProductId",
-                        column: x => x.ProductsProductId,
                         principalTable: "Products",
                         principalColumn: "ProductId",
                         onDelete: ReferentialAction.Cascade);
@@ -195,14 +172,14 @@ namespace DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CategoriesProducts_CategoryId",
+                table: "CategoriesProducts",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CategoriesProducts_ProductId",
                 table: "CategoriesProducts",
                 column: "ProductId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CategoryProduct_ProductsProductId",
-                table: "CategoryProduct",
-                column: "ProductsProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserDevices_DeviceId",
@@ -224,9 +201,6 @@ namespace DAL.Migrations
         {
             migrationBuilder.DropTable(
                 name: "CategoriesProducts");
-
-            migrationBuilder.DropTable(
-                name: "CategoryProduct");
 
             migrationBuilder.DropTable(
                 name: "Roles");

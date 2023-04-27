@@ -13,9 +13,7 @@
         public string BarCode { get; set; } = string.Empty;
 
         public string PathImage { get; set; } = string.Empty;
-
-        public ICollection<Category>? Categories { get; set; }
-
+        
         public ICollection<CategoryProduct>? CategoriesProducts { get; set; }
     }
 }

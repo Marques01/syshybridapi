@@ -1,24 +1,23 @@
 ﻿using BLL.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DAL.Mapping
 {
-    public class CategoryProductMapping : IEntityTypeConfiguration<CategoryProduct>
-    {
-        public void Configure(EntityTypeBuilder<CategoryProduct> builder)
-        {
-            builder.ToTable("CategoriesProducts");
+	public class CategoryProductMapping : IEntityTypeConfiguration<CategoryProduct>
+	{
+		public void Configure(EntityTypeBuilder<CategoryProduct> builder)
+		{
+			builder.ToTable("CategoriesProducts");
+			builder.HasKey(x => x.Id);
 
-            builder.HasKey(x => new { x.CategoryId, x.ProductId });
+			builder.HasOne(pc => pc.Product)
+					.WithMany(p => p.CategoriesProducts)
+					.HasForeignKey(pc => pc.ProductId);
 
-            builder.HasOne(x => x.Product)
-                .WithMany(x => x.CategoriesProducts)
-                .HasForeignKey(x => x.ProductId);
-
-            builder.HasOne(x => x.Category)
-                .WithMany(x => x.CategoriesProducts)
-                .HasForeignKey(x => x.CategoryId);
-        }
-    }
+			builder.HasOne(pc => pc.Category)
+				.WithMany(c => c.CategoriesProducts)
+				.HasForeignKey(pc => pc.CategoryId);
+		}
+	}
 }
