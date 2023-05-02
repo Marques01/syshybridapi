@@ -12,6 +12,9 @@ namespace API.Configurations
             services.AddScoped<IRolesRepository, RolesRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IDevicesRepository, DevicesRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IPurchaseRepository, PurchaseRepository>();
+            services.AddScoped<ISupplierRepository, SupplierRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
