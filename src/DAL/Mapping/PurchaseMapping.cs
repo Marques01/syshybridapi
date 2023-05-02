@@ -12,6 +12,7 @@ namespace DAL.Mapping
 			builder.HasKey(x => x.PurchaseId);
 			builder.Property(x => x.Status).HasColumnType<string>("nvarchar(25)");
 			builder.Property(x => x.Invoice).HasColumnType<string>("nvarchar(50)");
+			builder.Property(x => x.Value).HasColumnType("decimal(10,2)").HasPrecision(10, 2).HasConversion<decimal>();
 
 			builder.HasOne(supplier => supplier.Supplier)
 				.WithMany(purchases => purchases.Purchases)

@@ -14,7 +14,11 @@
 
         public ICategoryRepository CategoryRepository { get; }
 
-        Task<bool> CommitAsync();
+		public IPurchaseRepository PurchaseRepository { get; }
+
+		public ISupplierRepository SupplierRepository { get; }
+
+		Task<bool> CommitAsync();
 
         Task DisposeAsync();
     }

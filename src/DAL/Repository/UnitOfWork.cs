@@ -20,6 +20,10 @@ namespace DAL.Repository
 
         public ICategoryRepository CategoryRepository { get; }
 
+        public IPurchaseRepository PurchaseRepository { get; }
+
+        public ISupplierRepository SupplierRepository { get; }
+
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
@@ -35,6 +39,10 @@ namespace DAL.Repository
             DevicesRepository = new DevicesRepository(_context);
 
             CategoryRepository = new CategoryRepository(_context);
+
+            PurchaseRepository = new PurchaseRepository(_context);
+
+            SupplierRepository = new SupplierRepository(_context);
         }
         
         public async Task<bool> CommitAsync()
