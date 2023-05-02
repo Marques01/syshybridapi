@@ -17,5 +17,7 @@
         public DateTime DueDate { get; set; }
 
         public Supplier? Supplier { get; set; }
+
+        public ICollection<PurchaseProduct>? PurchaseProducts { get; set; }
     }
 }

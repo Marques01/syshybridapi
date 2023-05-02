@@ -15,5 +15,7 @@
         public string PathImage { get; set; } = string.Empty;
         
         public ICollection<CategoryProduct>? CategoriesProducts { get; set; }
+
+        public ICollection<PurchaseProduct>? PurchaseProducts { get; set; }
     }
 }

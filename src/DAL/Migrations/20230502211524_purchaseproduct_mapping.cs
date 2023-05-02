@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DAL.Migrations
 {
-    public partial class Change_Id_CategoryProducts : Migration
+    public partial class purchaseproduct_mapping : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -75,6 +75,25 @@ namespace DAL.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Suppliers",
+                columns: table => new
+                {
+                    SupplierId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "nvarchar(75)", nullable: false),
+                    CNPJ = table.Column<string>(type: "nvarchar(30)", nullable: false),
+                    CorporateName = table.Column<string>(type: "nvarchar(75)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(75)", nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(25)", nullable: false),
+                    Adress = table.Column<string>(type: "nvarchar(125)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Suppliers", x => x.SupplierId);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -82,7 +101,7 @@ namespace DAL.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     FirstName = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(50)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(100)", nullable: false),
+                    Login = table.Column<string>(type: "nvarchar(100)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(125)", nullable: false),
                     Enabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -119,6 +138,31 @@ namespace DAL.Migrations
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Purchases",
+                columns: table => new
+                {
+                    PurchaseId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    SupplierId = table.Column<int>(type: "int", nullable: false),
+                    Invoice = table.Column<string>(type: "nvarchar(50)", nullable: false),
+                    Value = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(25)", nullable: false),
+                    PurchaseDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    DueDate = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Purchases", x => x.PurchaseId);
+                    table.ForeignKey(
+                        name: "FK_Purchases_Suppliers_SupplierId",
+                        column: x => x.SupplierId,
+                        principalTable: "Suppliers",
+                        principalColumn: "SupplierId",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -171,6 +215,42 @@ namespace DAL.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "PurchaseProducts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    PurchaseId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    UnitaryValue = table.Column<decimal>(type: "decimal(8,2)", precision: 8, scale: 2, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PurchaseProducts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PurchaseProducts_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "ProductId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PurchaseProducts_Purchases_PurchaseId",
+                        column: x => x.PurchaseId,
+                        principalTable: "Purchases",
+                        principalColumn: "PurchaseId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PurchaseProducts_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateIndex(
                 name: "IX_CategoriesProducts_CategoryId",
                 table: "CategoriesProducts",
@@ -180,6 +260,26 @@ namespace DAL.Migrations
                 name: "IX_CategoriesProducts_ProductId",
                 table: "CategoriesProducts",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PurchaseProducts_ProductId",
+                table: "PurchaseProducts",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PurchaseProducts_PurchaseId",
+                table: "PurchaseProducts",
+                column: "PurchaseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PurchaseProducts_UserId",
+                table: "PurchaseProducts",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Purchases_SupplierId",
+                table: "Purchases",
+                column: "SupplierId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserDevices_DeviceId",
@@ -203,6 +303,9 @@ namespace DAL.Migrations
                 name: "CategoriesProducts");
 
             migrationBuilder.DropTable(
+                name: "PurchaseProducts");
+
+            migrationBuilder.DropTable(
                 name: "Roles");
 
             migrationBuilder.DropTable(
@@ -218,10 +321,16 @@ namespace DAL.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
+                name: "Purchases");
+
+            migrationBuilder.DropTable(
                 name: "Devices");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Suppliers");
         }
     }
 }

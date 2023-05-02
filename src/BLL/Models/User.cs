@@ -25,5 +25,7 @@
         public ICollection<UserRoles>? UserRoles { get; set; }
 
 		public ICollection<UserDevices>? UserDevices { get; set; }
-	}
+
+        public ICollection<PurchaseProduct>? PurchaseProducts { get; set; }
+    }
 }

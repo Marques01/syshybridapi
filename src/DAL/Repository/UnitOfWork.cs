@@ -24,7 +24,9 @@ namespace DAL.Repository
 
         public ISupplierRepository SupplierRepository { get; }
 
-        public UnitOfWork(ApplicationDbContext context)
+        public IPurchaseProductRepository PurchaseProductRepository { get; }
+
+		public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
 
@@ -43,6 +45,8 @@ namespace DAL.Repository
             PurchaseRepository = new PurchaseRepository(_context);
 
             SupplierRepository = new SupplierRepository(_context);
+
+            PurchaseProductRepository = new PurchaseProductRepository(_context);
         }
         
         public async Task<bool> CommitAsync()

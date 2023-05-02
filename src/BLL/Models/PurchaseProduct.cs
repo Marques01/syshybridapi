@@ -13,5 +13,11 @@
         public int Quantity { get; set; }
 
         public decimal UnitaryValue { get; set; }
+
+        public User? User { get; set; }
+
+        public Product? Product { get; set; }
+
+        public Purchase? Purchase { get; set; }
     }
 }

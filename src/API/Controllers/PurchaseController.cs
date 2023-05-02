@@ -24,5 +24,16 @@ namespace API.Controllers
 
 			return Ok("success");
 		}
+
+		[HttpPost]
+		[Route("add/product")]
+		public async Task<ActionResult> AddProducts([FromBody] PurchaseProduct purchaseProduct)
+		{
+			await _uof.PurchaseProductRepository.AddProductAsync(purchaseProduct);
+
+			await _uof.CommitAsync();
+
+			return Ok("success");
+		}
 	}
 }

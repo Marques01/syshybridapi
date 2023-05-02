@@ -139,6 +139,39 @@ namespace DAL.Migrations
                     b.ToTable("Purchases", (string)null);
                 });
 
+            modelBuilder.Entity("BLL.Models.PurchaseProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PurchaseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("UnitaryValue")
+                        .HasPrecision(8, 2)
+                        .HasColumnType("decimal(8,2)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("PurchaseId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PurchaseProducts", (string)null);
+                });
+
             modelBuilder.Entity("BLL.Models.Roles", b =>
                 {
                     b.Property<Guid>("RoleId")
@@ -301,6 +334,33 @@ namespace DAL.Migrations
                     b.Navigation("Supplier");
                 });
 
+            modelBuilder.Entity("BLL.Models.PurchaseProduct", b =>
+                {
+                    b.HasOne("BLL.Models.Product", "Product")
+                        .WithMany("PurchaseProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BLL.Models.Purchase", "Purchase")
+                        .WithMany("PurchaseProducts")
+                        .HasForeignKey("PurchaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BLL.Models.User", "User")
+                        .WithMany("PurchaseProducts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Purchase");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BLL.Models.UserDevices", b =>
                 {
                     b.HasOne("BLL.Models.Devices", "Devices")
@@ -344,6 +404,13 @@ namespace DAL.Migrations
             modelBuilder.Entity("BLL.Models.Product", b =>
                 {
                     b.Navigation("CategoriesProducts");
+
+                    b.Navigation("PurchaseProducts");
+                });
+
+            modelBuilder.Entity("BLL.Models.Purchase", b =>
+                {
+                    b.Navigation("PurchaseProducts");
                 });
 
             modelBuilder.Entity("BLL.Models.Supplier", b =>
@@ -353,6 +420,8 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("BLL.Models.User", b =>
                 {
+                    b.Navigation("PurchaseProducts");
+
                     b.Navigation("UserDevices");
 
                     b.Navigation("UserRoles");

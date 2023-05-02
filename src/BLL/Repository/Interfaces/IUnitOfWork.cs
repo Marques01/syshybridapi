@@ -18,6 +18,8 @@
 
 		public ISupplierRepository SupplierRepository { get; }
 
+        public IPurchaseProductRepository PurchaseProductRepository { get; }
+
 		Task<bool> CommitAsync();
 
         Task DisposeAsync();

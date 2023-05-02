@@ -3,7 +3,7 @@ using DAL.Repository;
 
 namespace API.Configurations
 {
-    public class DependencyInjection
+	public class DependencyInjection
     {
         public static void RegisterConfiguration(IServiceCollection services)
         {
@@ -15,7 +15,8 @@ namespace API.Configurations
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IPurchaseRepository, PurchaseRepository>();
             services.AddScoped<ISupplierRepository, SupplierRepository>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+			services.AddScoped<IPurchaseProductRepository, PurchaseProductRepository>();
+			services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
 }
