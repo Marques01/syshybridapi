@@ -18,6 +18,7 @@ namespace DAL.Repository
 
         public IDevicesRepository DevicesRepository { get; }
 
+        public ICategoryRepository CategoryRepository { get; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -32,6 +33,8 @@ namespace DAL.Repository
             ProductRepository = new ProductRepository(_context);
 
             DevicesRepository = new DevicesRepository(_context);
+
+            CategoryRepository = new CategoryRepository(_context);
         }
         
         public async Task<bool> CommitAsync()

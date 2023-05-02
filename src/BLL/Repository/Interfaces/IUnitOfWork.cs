@@ -12,6 +12,8 @@
 
         public IDevicesRepository DevicesRepository { get; }
 
+        public ICategoryRepository CategoryRepository { get; }
+
         Task<bool> CommitAsync();
 
         Task DisposeAsync();

@@ -10,9 +10,7 @@
 
         public decimal Value { get; set; }
 
-        public string Status { get; set; } = string.Empty;
-
-        public string StatusCode { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;        
 
         public DateTime PurchaseDate { get; set; }
 
