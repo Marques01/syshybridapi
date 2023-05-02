@@ -21,6 +21,10 @@ namespace DAL.Context
 
         public DbSet<UserDevices> UserDevices { get; set; }
 
+        public DbSet<Supplier> Suppliers { get; set; }
+
+        public DbSet<Purchase> Purchases { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) :base(options) 
         {
             Users = Set<User>();
@@ -38,6 +42,10 @@ namespace DAL.Context
             Devices = Set<Devices>();
 
             UserDevices = Set<UserDevices>();
+
+            Suppliers = Set<Supplier>();
+
+            Purchases = Set<Purchase>();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

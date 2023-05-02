@@ -15,5 +15,7 @@
         public DateTime PurchaseDate { get; set; }
 
         public DateTime DueDate { get; set; }
+
+        public Supplier? Supplier { get; set; }
     }
 }
