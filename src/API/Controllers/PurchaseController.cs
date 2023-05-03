@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-	[ApiController]
+    [ApiController]
 	[Route("api/[controller]")]
 	public class PurchaseController : ControllerBase
 	{
@@ -34,6 +34,14 @@ namespace API.Controllers
 			await _uof.CommitAsync();
 
 			return Ok("success");
+		}
+
+		[HttpGet]
+		public async Task<ActionResult> PurchaseProducts([FromQuery] int id)
+		{
+			var purchaseProducts = await _uof.PurchaseProductRepository.GetByPurchaseIdAsync(id);
+
+			return Ok(purchaseProducts);
 		}
 	}
 }

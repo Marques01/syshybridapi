@@ -8,6 +8,8 @@ namespace BLL.Repository.Interfaces
 
 		Task UpdateProductAsync(PurchaseProduct purchaseProduct);
 
+		Task<IEnumerable<PurchaseProduct>> GetByPurchaseIdAsync(int id);
+
 		Task DeleteProductAsync(int id);
 	}
 }
