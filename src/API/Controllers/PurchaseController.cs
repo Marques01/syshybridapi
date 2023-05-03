@@ -45,6 +45,16 @@ namespace API.Controllers
 			return Ok("success");
 		}
 
+		[HttpPut]
+		public async Task<ActionResult> Update([FromBody] PurchaseProduct purchaseProduct)
+		{
+			await _uof.PurchaseProductRepository.UpdateProductAsync(purchaseProduct);
+
+			await _uof.CommitAsync();
+
+			return Ok("success");
+		}
+
 		[HttpDelete]
 		[Route("remove/product")]
 		public async Task<ActionResult> Delete([FromQuery] int id)

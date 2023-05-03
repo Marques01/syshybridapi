@@ -50,9 +50,20 @@ namespace DAL.Repository
         }
 
 
-        public Task UpdateProductAsync(PurchaseProduct purchaseProduct)
+        public async Task UpdateProductAsync(PurchaseProduct purchaseProduct)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.PurchaseProducts.Update(purchaseProduct);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = "Não foi possível atualizar o produto da lista de compras\n";
+
+                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+
+                throw new Exception(errorMessage);
+            }
         }
         public async Task<IEnumerable<PurchaseProduct>> GetByPurchaseIdAsync(int id)
         {
