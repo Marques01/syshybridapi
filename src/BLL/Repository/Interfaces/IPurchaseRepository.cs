@@ -8,6 +8,11 @@ namespace BLL.Repository.Interfaces
 
 		Task UpdateAsync(Purchase purchase);
 
-		Task DeleteAsync(int id);
+        Task DeleteAsync(int id);
+
+        Task FinalizePurchaseAsync(Purchase purchase);
+
+		Task<Purchase> GetPurchaseByIdAsync(int purchaseId);
+		
 	}
 }

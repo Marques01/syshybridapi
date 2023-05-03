@@ -10,7 +10,7 @@ namespace DAL.Mapping
 		{
 			builder.ToTable("PurchaseProducts");
 			builder.HasKey(x => x.Id);
-			builder.Property(x => x.UnitaryValue).HasColumnType("decimal(10,2)").HasPrecision(8, 2).HasConversion<decimal>();
+			builder.Property(x => x.UnitaryValue).HasColumnType("decimal(10,2)").HasPrecision(10, 2).HasConversion<decimal>();
 
 			builder.HasOne(u => u.User)
 				.WithMany(purchaseProduct => purchaseProduct.PurchaseProducts)
