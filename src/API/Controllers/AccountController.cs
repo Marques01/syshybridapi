@@ -14,9 +14,13 @@ namespace API.Controllers
 	{
 		private readonly IUnitOfWork _uof;
 
-		public AccountController(IUnitOfWork uof)
+		private readonly IConfiguration _configuration;
+
+		public AccountController(IUnitOfWork uof, IConfiguration configuration)
 		{
 			_uof = uof;
+
+			_configuration = configuration;
 		}
 
 		[Route("login")]
@@ -96,7 +100,9 @@ namespace API.Controllers
 					authClaims.Add(new Claim(ClaimTypes.Role, item.Name));
 				}
 
-				var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtKey.Key));
+                string jwtKey = _configuration.GetSection("Jwt:Key").Value;
+
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
 
 				var creds =
 				   new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

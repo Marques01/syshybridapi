@@ -31,9 +31,22 @@ namespace DAL.Repository
             }
         }
 
-        public Task DeleteProductAsync(int id)
+        public async Task DeleteProductAsync(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var purchaseProducts = await GetPurchaseProductByIdAsync(id);
+
+                _context.PurchaseProducts.Remove(purchaseProducts);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = "Não foi possível deletar o produto da lista de compras\n";
+
+                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+
+                throw new Exception(errorMessage);
+            }
         }
 
 
@@ -60,6 +73,27 @@ namespace DAL.Repository
             catch (Exception ex)
             {
                 string errorMessage = "Não foi possível buscar os produto das listas de compras\n";
+
+                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+
+                throw new Exception(errorMessage);
+            }
+        }
+
+        public async Task<PurchaseProduct> GetPurchaseProductByIdAsync(int id)
+        {
+            try
+            {
+                var purchaseProducts = await _context.PurchaseProducts.FirstOrDefaultAsync(x => x.Id.Equals(id));
+
+                if (purchaseProducts is not null)
+                    return purchaseProducts;
+
+                return new PurchaseProduct();
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = "Não foi possível buscar o produto da lista de compras\n";
 
                 await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
 

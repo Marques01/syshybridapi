@@ -1,5 +1,4 @@
 using API.Configurations;
-using BLL.Models;
 using DAL.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +17,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseMySql(
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(ServerVersion.AutoDetect(connectionString)));
 
+string jwtKey = builder.Configuration.GetSection("Jwt:Key").Value;
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x =>
 x.TokenValidationParameters = new TokenValidationParameters
 {
@@ -25,7 +26,7 @@ x.TokenValidationParameters = new TokenValidationParameters
     ValidateAudience = false,
     ValidateLifetime = true,
     ValidateIssuerSigningKey = true,
-    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtKey.Key)),
+    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
     ClockSkew = TimeSpan.Zero
 });
 

@@ -15,6 +15,15 @@ namespace API.Controllers
 			_uof = uof;
         }
 
+        [HttpGet]
+        [Route("purchases/products")]
+        public async Task<ActionResult> PurchaseProducts([FromQuery] int id)
+        {
+            var purchaseProducts = await _uof.PurchaseProductRepository.GetByPurchaseIdAsync(id);
+
+            return Ok(purchaseProducts);
+        }
+
         [HttpPost]
 		public async Task<ActionResult> Create([FromBody] Purchase purchase)
 		{
@@ -36,12 +45,15 @@ namespace API.Controllers
 			return Ok("success");
 		}
 
-		[HttpGet]
-		public async Task<ActionResult> PurchaseProducts([FromQuery] int id)
+		[HttpDelete]
+		[Route("remove/product")]
+		public async Task<ActionResult> Delete([FromQuery] int id)
 		{
-			var purchaseProducts = await _uof.PurchaseProductRepository.GetByPurchaseIdAsync(id);
+			await _uof.PurchaseProductRepository.DeleteProductAsync(id);
 
-			return Ok(purchaseProducts);
+			await _uof.CommitAsync();
+
+			return Ok("success");
 		}
 	}
 }
