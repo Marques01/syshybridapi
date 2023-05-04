@@ -13,7 +13,9 @@
         public string BarCode { get; set; } = string.Empty;
 
         public string PathImage { get; set; } = string.Empty;
-        
+
+        public Stock? Stock { get; set; }
+
         public ICollection<CategoryProduct>? CategoriesProducts { get; set; }
 
         public ICollection<PurchaseProduct>? PurchaseProducts { get; set; }

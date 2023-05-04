@@ -58,8 +58,12 @@ namespace DAL.Repository
 
                 purchase.Status = PurchaseStatus.Completed.ToString();
 
-                _context.Purchases.Update(purchase);
-            }
+                _context.Purchases.Update(purchase); 
+                
+                var productsPurchases = await _context.PurchaseProducts.AsNoTracking().Where(x => x.PurchaseId.Equals(purchase.PurchaseId)).ToListAsync();
+
+                await AddProductStockAsync(productsPurchases);
+			}
             catch (Exception ex)
             {
                 string errorMessage = "Não foi possível finalizar a compra\n";
@@ -105,6 +109,22 @@ namespace DAL.Repository
 
                 throw new Exception(errorMessage);
             }
+        }
+
+        private async Task AddProductStockAsync(IEnumerable<PurchaseProduct> purchaseProducts)
+        {
+            List<Stock> stocks = new();
+
+            foreach (var purchaseProduct in purchaseProducts)
+            {
+                stocks.Add(new Stock()
+                {
+                    Quantity = purchaseProduct.Quantity,
+                    ProductId = purchaseProduct.ProductId,
+                });
+            }
+
+            await _context.Stocks.AddRangeAsync(stocks);
         }
     }
 }
