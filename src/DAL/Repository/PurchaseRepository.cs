@@ -91,9 +91,20 @@ namespace DAL.Repository
             }
         }
 
-        public Task UpdateAsync(Purchase purchase)
+        public async Task UpdateAsync(Purchase purchase)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Purchases.Update(purchase);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = "Não foi possível buscar a compra pelo id\n";
+
+                await RegisterLogs.CreateAsync($"{errorMessage} {ex.Message}\t{ex.InnerException}\t{ex.StackTrace}", this.GetType().ToString());
+
+                throw new Exception(errorMessage);
+            }
         }
     }
 }
